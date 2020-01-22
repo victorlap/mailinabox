@@ -667,13 +667,14 @@ def query_dns(qname, rtype, nxdomain='[Not Set]', at=None):
 	if isinstance(qname, str):
 		qname += "."
 
-	# Use the default nameservers (as defined by the system, which is our locally
-	# running bind server), or if the 'at' argument is specified, use that host
-	# as the nameserver.
-	resolver = dns.resolver.get_default_resolver()
+	# Use external nameservers so that we can test if the dns records are propagated,
+	# or if the 'at' argument is specified, use that host as the nameserver.
+	resolver = dns.resolver.Resolver()
 	if at:
-		resolver = dns.resolver.Resolver()
 		resolver.nameservers = [at]
+	else:
+		# OpenDNS nameservers
+		resolver.nameservers = ['208.67.222.222', '208.67.220.220']
 
 	# Set a timeout so that a non-responsive server doesn't hold us back.
 	resolver.timeout = 5
